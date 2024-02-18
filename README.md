@@ -1,4 +1,6 @@
-# Google Generative AI SDK for Kotlin Multiplatform
+# Google Generative AI SDK for Kotlin Multiplatform ✨
+
+<a href="https://search.maven.org/search?q=g:dev.shreyaspatil.generativeai"><img src="https://img.shields.io/maven-central/v/dev.shreyaspatil.generativeai/generativeai-google?label=Maven%20Central&logo=kotlin&style=flat-square"/></a>
 
 The Google Generative AI client SDK for Kotlin Multiplatform enables developers to use Google's 
 state-of-the-art generative AI models (like Gemini) to build AI-powered features and applications. 
@@ -26,7 +28,7 @@ val response = generativeModel.generateContent(inputContent)
 print(response.text)
 ```
 
-Support following Kotlin Multiplatform targets:
+Supports the following Kotlin Multiplatform targets:
 - [x] Android
 - [x] iOS
 - [x] JVM
@@ -43,8 +45,7 @@ commonMain.dependencies {
 }
 ```
 
-Check for latest version in the [releases](https://github.com/PatilShreyas/generative-ai-kmp/releases) 
-<a href="https://search.maven.org/search?q=g:dev.shreyaspatil.generativeai"><img src="https://img.shields.io/maven-central/v/dev.shreyaspatil.generativeai/generativeai-google?label=Maven%20Central&logo=kotlin&style=flat-square"/></a>
+Check for latest version in the [releases](https://github.com/PatilShreyas/generative-ai-kmp/releases).
 
 For detailed instructions, you can find a [quickstart](https://ai.google.dev/tutorials/android_quickstart) 
 for the Google AI client SDK for Android (_Since this is a Fork of the original project by Google_).
@@ -53,10 +54,26 @@ This quickstart describes how to add your API key and the SDK's dependency to yo
 initialize the model, and then call the API to access the model. It also describes some additional 
 use cases and features, like streaming, counting tokens, and controlling responses.
 
+### Releases
+The versioning scheme is of the form `X-Y` where:
+
+X is the _Generative AI  Android SDK_ version that is being tracked.
+Y is the _Multiplatform SDK_ version.
+For example, if _Generative AI  Android SDK_ is on `0.1.2` and _Multiplatform SDK_ is on `0.0.1`, the artifact for a release will be `dev.shreyaspatil.generativeai:generativeai-google:0.1.2-0.0.1`.
+
+## Try sample app
+
+Try these apps built with this SDK by the community:
+
+- [PatilShreyas/ChaKt](https://github.com/PatilShreyas/ChaKt-KMP): Chat-prompt based app for Android, iOS, Desktop, Web. Powered by this multiplatform SDK.
+- [joreilly/GeminiKMP](https://github.com/joreilly/GeminiKMP): Kotlin Multiplatform sample that uses Gemini Generative AI APIs. Runs on Android, iOS, Desktop, WearOS and Wasm-based Compose for Web.
+
+*(Have you built anything on top of this SDK? Let's add it here)*
+
 ## Documentation
 
 You can use the APIs mentioned in the [API Reference](https://ai.google.dev/tutorials/android_quickstart)
-by official library.
+by the official library.
 
 From the official library, there are two major changes:
 - Package `com.google` is mapped to `dev.shreyaspatil`.
@@ -68,13 +85,13 @@ See [Contributing](https://github.com/patilshreyas/generative-ai-kmp/blob/main/C
 more information on contributing to the client SDK for multiplatform.
 
 ## Credits
-Big thanks to Google for project [google/generative-ai-android](https://github.com/google/generative-ai-android).
+Thanks to Google for the project: [google/generative-ai-android](https://github.com/google/generative-ai-android).
 
 ## Fork License
-Copyright for portions of the code are held by [Google] as part of project 
+Copyright for portions of the code is held by [Google, 2023] as part of the project 
 [google/generative-ai-android](https://github.com/google/generative-ai-android) under the 
 Apache License, version 2.0. 
-All other copyright for project generative-ai-multiplatform are held by [Google, 2023] under the 
+All other copyrights for project *generative-ai-kmp* are held by [Shreyas Patil, 2024] under the 
 Apache License, Version 2.0.
 
 ## License
