@@ -98,37 +98,37 @@ internal typealias CommonTest = suspend CommonTestScope.() -> Unit
  * @see CommonTestScope
  */
 internal fun commonTest(
-  status: HttpStatusCode = HttpStatusCode.OK,
-  requestOptions: RequestOptions = RequestOptions(),
-  block: CommonTest
+    status: HttpStatusCode = HttpStatusCode.OK,
+    requestOptions: RequestOptions = RequestOptions(),
+    block: CommonTest,
 ) = doBlocking {
-  val channel = ByteChannel(autoFlush = true)
-  val mockEngine = MockEngine {
-    respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json"))
-  }
-  val model = createGenerativeModel("gemini-pro", "super_cool_test_key", requestOptions, mockEngine)
-  CommonTestScope(channel, model).block()
+    val channel = ByteChannel(autoFlush = true)
+    val mockEngine = MockEngine {
+        respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json"))
+    }
+    val model = createGenerativeModel("gemini-pro", "super_cool_test_key", requestOptions, mockEngine)
+    CommonTestScope(channel, model).block()
 }
 
 /** Simple wrapper that guarantees the model and APIController are created using the same data */
 internal fun createGenerativeModel(
-  name: String,
-  apikey: String,
-  requestOptions: RequestOptions = RequestOptions(),
-  engine: MockEngine
+    name: String,
+    apikey: String,
+    requestOptions: RequestOptions = RequestOptions(),
+    engine: MockEngine,
 ) =
-  GenerativeModel(
-    name,
-    apikey,
-    controller =
-      APIController(
-        "super_cool_test_key",
+    GenerativeModel(
         name,
-        requestOptions.apiVersion,
-        requestOptions.timeout,
-        engine
-      )
-  )
+        apikey,
+        controller =
+        APIController(
+            "super_cool_test_key",
+            name,
+            requestOptions.apiVersion,
+            requestOptions.timeout,
+            engine,
+        ),
+    )
 
 /**
  * A variant of [commonTest] for performing *streaming-based* snapshot tests.

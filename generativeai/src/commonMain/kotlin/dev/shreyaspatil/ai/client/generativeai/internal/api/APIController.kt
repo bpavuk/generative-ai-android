@@ -35,13 +35,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration
 
 internal const val DOMAIN = "https://generativelanguage.googleapis.com"
 
@@ -63,34 +62,34 @@ internal val JSON = Json {
  * @property timeout the maximum amount of time for a request to take in the initial exchange.
  */
 internal class APIController(
-  private val key: String,
-  model: String,
-  private val apiVersion: String,
-  private val timeout: Duration,
-  httpEngine: HttpClientEngine? = null,
+    private val key: String,
+    model: String,
+    private val apiVersion: String,
+    private val timeout: Duration,
+    httpEngine: HttpClientEngine? = null,
 ) {
     private val model = fullModelName(model)
-    private val client = getHttpClient(engine, timeout)
+    private val client = getHttpClient(httpEngine, timeout)
 
-  suspend fun generateContent(request: GenerateContentRequest): GenerateContentResponse =
-    client
-      .post("$DOMAIN/$apiVersion/$model:generateContent") { applyCommonConfiguration(request) }
-      .also { validateResponse(it) }
-      .body()
+    suspend fun generateContent(request: GenerateContentRequest): GenerateContentResponse =
+        client
+            .post("$DOMAIN/$apiVersion/$model:generateContent") { applyCommonConfiguration(request) }
+            .also { validateResponse(it) }
+            .body()
 
-  fun generateContentStream(request: GenerateContentRequest): Flow<GenerateContentResponse> {
-    return client.postStream<GenerateContentResponse>(
-      "$DOMAIN/$apiVersion/$model:streamGenerateContent?alt=sse"
-    ) {
-      applyCommonConfiguration(request)
+    fun generateContentStream(request: GenerateContentRequest): Flow<GenerateContentResponse> {
+        return client.postStream<GenerateContentResponse>(
+            "$DOMAIN/$apiVersion/$model:streamGenerateContent?alt=sse",
+        ) {
+            applyCommonConfiguration(request)
+        }
     }
-  }
 
-  suspend fun countTokens(request: CountTokensRequest): CountTokensResponse =
-    client
-      .post("$DOMAIN/$apiVersion/$model:countTokens") { applyCommonConfiguration(request) }
-      .also { validateResponse(it) }
-      .body()
+    suspend fun countTokens(request: CountTokensRequest): CountTokensResponse =
+        client
+            .post("$DOMAIN/$apiVersion/$model:countTokens") { applyCommonConfiguration(request) }
+            .also { validateResponse(it) }
+            .body()
 
     private fun HttpRequestBuilder.applyCommonConfiguration(request: Request) {
         when (request) {
@@ -103,20 +102,20 @@ internal class APIController(
     }
 
     companion object {
-      fun getHttpClient(engine: HttpClientEngine?, timeout: Duration): HttpClient {
-        val configuration: HttpClientConfig<*>.() -> Unit = {
-          install(HttpTimeout) {
-            requestTimeoutMillis = timeout.inWholeMilliseconds
-            socketTimeoutMillis = 80_000
-          }
-          install(ContentNegotiation) { json(JSON) }
+        fun getHttpClient(engine: HttpClientEngine?, timeout: Duration): HttpClient {
+            val configuration: HttpClientConfig<*>.() -> Unit = {
+                install(HttpTimeout) {
+                    requestTimeoutMillis = timeout.inWholeMilliseconds
+                    socketTimeoutMillis = 80_000
+                }
+                install(ContentNegotiation) { json(JSON) }
+            }
+            return if (engine == null) {
+                HttpClient(block = configuration)
+            } else {
+                HttpClient(engine, block = configuration)
+            }
         }
-        return if (engine == null) {
-          HttpClient(block = configuration)
-        } else {
-          HttpClient(engine, block = configuration)
-        }
-      }
     }
 }
 

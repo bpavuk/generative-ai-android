@@ -24,26 +24,29 @@ sealed class GoogleGenerativeAIException(message: String, cause: Throwable? = nu
     RuntimeException(message, cause) {
     companion object {
 
-    /**
-     * Converts a [Throwable] to a [GoogleGenerativeAIException].
-     *
-     * Will populate default messages as expected, and propagate the provided [cause] through the
-     * resulting exception.
-     */
-    fun from(cause: Throwable): GoogleGenerativeAIException =
-      when (cause) {
-        is GoogleGenerativeAIException -> cause
-        is JsonConvertException,
-        is kotlinx.serialization.SerializationException ->
-          SerializationException(
-            "Something went wrong while trying to deserialize a response from the server.",
-            cause
-          )
-        is TimeoutCancellationException ->
-          RequestTimeoutException("The request failed to complete in the allotted time.")
-        else -> UnknownException("Something unexpected happened.", cause)
-      }
-  }
+        /**
+         * Converts a [Throwable] to a [GoogleGenerativeAIException].
+         *
+         * Will populate default messages as expected, and propagate the provided [cause] through the
+         * resulting exception.
+         */
+        fun from(cause: Throwable): GoogleGenerativeAIException =
+            when (cause) {
+                is GoogleGenerativeAIException -> cause
+                is JsonConvertException,
+                is kotlinx.serialization.SerializationException,
+                ->
+                    SerializationException(
+                        "Something went wrong while trying to deserialize a response from the server.",
+                        cause,
+                    )
+
+                is TimeoutCancellationException ->
+                    RequestTimeoutException("The request failed to complete in the allotted time.")
+
+                else -> UnknownException("Something unexpected happened.", cause)
+            }
+    }
 }
 
 /** Something went wrong while trying to deserialize a response from the server. */
@@ -92,7 +95,7 @@ class ResponseStoppedException(val response: GenerateContentResponse, cause: Thr
  * Usually occurs due to a user specified [timeout][RequestOptions.timeout].
  */
 class RequestTimeoutException(message: String, cause: Throwable? = null) :
-  GoogleGenerativeAIException(message, cause)
+    GoogleGenerativeAIException(message, cause)
 
 /** Catch all case for exceptions not explicitly expected. */
 class UnknownException(message: String, cause: Throwable? = null) :
