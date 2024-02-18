@@ -14,7 +14,7 @@ generate text from text-and-image input:
 
 ```kotlin
 val generativeModel = GenerativeModel(
-    modelName = "gemini-pro-vision", // or "gemini-pro" for text-only input
+    modelName = "gemini-1.0-pro-vision-latest",
     apiKey = "YOUR_API_KEY"
 )
 
@@ -59,7 +59,7 @@ The versioning scheme is of the form `X-Y` where:
 
 X is the _Generative AI  Android SDK_ version that is being tracked.
 Y is the _Multiplatform SDK_ version.
-For example, if _Generative AI  Android SDK_ is on `0.1.2` and _Multiplatform SDK_ is on `0.0.1`, the artifact for a release will be `dev.shreyaspatil.generativeai:generativeai-google:0.1.2-0.0.1`.
+For example, if _Generative AI  Android SDK_ is on `0.2.0` and _Multiplatform SDK_ is on `1.0.0`, the artifact for a release will be `dev.shreyaspatil.generativeai:generativeai-google:0.2.0-1.0.0`.
 
 ## Try sample app
 
