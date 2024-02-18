@@ -33,7 +33,7 @@ Supports the following Kotlin Multiplatform targets:
 - [x] iOS
 - [x] JVM
 - [x] JS
-- [x] Wasm (_Use this [version](https://github.com/PatilShreyas/generative-ai-kmp/releases/tag/v0.1.2-0.0.1-wasm)_)
+- [x] Wasm (_Use this [version](https://github.com/PatilShreyas/generative-ai-kmp/releases/tag/v0.2.0-1.0.0-wasm)_)
 
 ## Installation and usage
 
