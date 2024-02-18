@@ -17,31 +17,33 @@ package dev.shreyaspatil.ai.client.generativeai.type
 
 import dev.shreyaspatil.ai.client.generativeai.GenerativeModel
 import io.ktor.serialization.JsonConvertException
+import kotlinx.coroutines.TimeoutCancellationException
 
 /** Parent class for any errors that occur from [GenerativeModel]. */
 sealed class GoogleGenerativeAIException(message: String, cause: Throwable? = null) :
     RuntimeException(message, cause) {
     companion object {
 
-        /**
-         * Converts a [Throwable] to a [GoogleGenerativeAIException].
-         *
-         * Will populate default messages as expected, and propagate the provided [cause] through the
-         * resulting exception.
-         */
-        fun from(cause: Throwable): GoogleGenerativeAIException =
-            when (cause) {
-                is GoogleGenerativeAIException -> cause
-                is JsonConvertException,
-                is kotlinx.serialization.SerializationException,
-                ->
-                    SerializationException(
-                        "Something went wrong while trying to deserialize a response from the server.",
-                        cause,
-                    )
-                else -> UnknownException("Something unexpected happened.", cause)
-            }
-    }
+    /**
+     * Converts a [Throwable] to a [GoogleGenerativeAIException].
+     *
+     * Will populate default messages as expected, and propagate the provided [cause] through the
+     * resulting exception.
+     */
+    fun from(cause: Throwable): GoogleGenerativeAIException =
+      when (cause) {
+        is GoogleGenerativeAIException -> cause
+        is JsonConvertException,
+        is kotlinx.serialization.SerializationException ->
+          SerializationException(
+            "Something went wrong while trying to deserialize a response from the server.",
+            cause
+          )
+        is TimeoutCancellationException ->
+          RequestTimeoutException("The request failed to complete in the allotted time.")
+        else -> UnknownException("Something unexpected happened.", cause)
+      }
+  }
 }
 
 /** Something went wrong while trying to deserialize a response from the server. */
@@ -83,6 +85,14 @@ class ResponseStoppedException(val response: GenerateContentResponse, cause: Thr
         "Content generation stopped. Reason: ${response.candidates.first().finishReason?.name}",
         cause,
     )
+
+/**
+ * A request took too long to complete.
+ *
+ * Usually occurs due to a user specified [timeout][RequestOptions.timeout].
+ */
+class RequestTimeoutException(message: String, cause: Throwable? = null) :
+  GoogleGenerativeAIException(message, cause)
 
 /** Catch all case for exceptions not explicitly expected. */
 class UnknownException(message: String, cause: Throwable? = null) :

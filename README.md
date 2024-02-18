@@ -12,7 +12,7 @@ generate text from text-and-image input:
 
 ```kotlin
 val generativeModel = GenerativeModel(
-    modelName = "gemini-pro-vision", // or "gemini-pro" for text-only input
+    modelName = "gemini-1.0-pro-vision-latest",
     apiKey = "YOUR_API_KEY"
 )
 
