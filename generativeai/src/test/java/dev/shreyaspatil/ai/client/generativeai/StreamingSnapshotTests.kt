@@ -18,8 +18,8 @@ package dev.shreyaspatil.ai.client.generativeai
 import dev.shreyaspatil.ai.client.generativeai.type.BlockReason
 import dev.shreyaspatil.ai.client.generativeai.type.FinishReason
 import dev.shreyaspatil.ai.client.generativeai.type.HarmCategory
-import dev.shreyaspatil.ai.client.generativeai.type.PromptBlockedException
 import dev.shreyaspatil.ai.client.generativeai.type.InvalidAPIKeyException
+import dev.shreyaspatil.ai.client.generativeai.type.PromptBlockedException
 import dev.shreyaspatil.ai.client.generativeai.type.ResponseStoppedException
 import dev.shreyaspatil.ai.client.generativeai.type.SerializationException
 import dev.shreyaspatil.ai.client.generativeai.type.ServerException

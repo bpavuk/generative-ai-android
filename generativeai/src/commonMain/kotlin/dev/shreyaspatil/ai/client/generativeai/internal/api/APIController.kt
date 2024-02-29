@@ -173,21 +173,21 @@ private inline fun <reified R : Response> HttpClient.postStream(
 }
 
 private suspend fun validateResponse(response: HttpResponse) {
-  if (response.status != HttpStatusCode.OK) {
-    val text = response.bodyAsText()
-    val message =
-      try {
-        JSON.decodeFromString<GRpcErrorResponse>(text).error.message
-      } catch (e: Throwable) {
-        "Unexpected Response:\n$text"
-      }
-    if (message.contains("API key not valid")) {
-      throw InvalidAPIKeyException(message)
+    if (response.status != HttpStatusCode.OK) {
+        val text = response.bodyAsText()
+        val message =
+            try {
+                JSON.decodeFromString<GRpcErrorResponse>(text).error.message
+            } catch (e: Throwable) {
+                "Unexpected Response:\n$text"
+            }
+        if (message.contains("API key not valid")) {
+            throw InvalidAPIKeyException(message)
+        }
+        // TODO (b/325117891): Use a better method than string matching.
+        if (message == "User location is not supported for the API use.") {
+            throw UnsupportedUserLocationException()
+        }
+        throw ServerException(message)
     }
-    // TODO (b/325117891): Use a better method than string matching.
-    if (message == "User location is not supported for the API use.") {
-      throw UnsupportedUserLocationException()
-    }
-    throw ServerException(message)
-  }
 }

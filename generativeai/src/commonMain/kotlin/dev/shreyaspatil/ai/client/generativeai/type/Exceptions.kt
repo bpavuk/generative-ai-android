@@ -59,7 +59,7 @@ class ServerException(message: String, cause: Throwable? = null) :
 
 /** The server responded that the API Key is no valid. */
 class InvalidAPIKeyException(message: String, cause: Throwable? = null) :
-  GoogleGenerativeAIException(message, cause)
+    GoogleGenerativeAIException(message, cause)
 
 /**
  * A request was blocked for some reason.
@@ -82,7 +82,7 @@ class PromptBlockedException(val response: GenerateContentResponse, cause: Throw
  * territories) where the API is available.
  */
 class UnsupportedUserLocationException(cause: Throwable? = null) :
-  GoogleGenerativeAIException("User location is not supported for the API use.", cause)
+    GoogleGenerativeAIException("User location is not supported for the API use.", cause)
 
 /**
  * Some form of state occurred that shouldn't have.
