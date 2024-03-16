@@ -17,6 +17,7 @@ package dev.shreyaspatil.ai.client.generativeai.internal.api
 
 import dev.shreyaspatil.ai.client.generativeai.internal.util.decodeToFlow
 import dev.shreyaspatil.ai.client.generativeai.type.InvalidAPIKeyException
+import dev.shreyaspatil.ai.client.generativeai.type.RequestOptions
 import dev.shreyaspatil.ai.client.generativeai.type.ServerException
 import dev.shreyaspatil.ai.client.generativeai.type.UnsupportedUserLocationException
 import io.ktor.client.HttpClient
@@ -66,12 +67,12 @@ internal val JSON = Json {
 internal class APIController(
     private val key: String,
     model: String,
-    private val apiVersion: String,
-    private val timeout: Duration,
+    requestOptions: RequestOptions,
     httpEngine: HttpClientEngine? = null,
 ) {
     private val model = fullModelName(model)
-    private val client = getHttpClient(httpEngine, timeout)
+    private val client = getHttpClient(httpEngine, requestOptions.timeout)
+    private val apiVersion = requestOptions.apiVersion
 
     suspend fun generateContent(request: GenerateContentRequest): GenerateContentResponse =
         client
