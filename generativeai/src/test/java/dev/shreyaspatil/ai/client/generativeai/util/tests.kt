@@ -38,7 +38,6 @@ import io.ktor.utils.io.close
 import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import java.io.File
 
 internal fun prepareStreamingResponse(response: List<GenerateContentResponse>): List<ByteArray> =
     response.map { "data: ${JSON.encodeToString(it)}$SSE_SEPARATOR".toByteArray() }
@@ -117,18 +116,11 @@ internal fun createGenerativeModel(
     requestOptions: RequestOptions = RequestOptions(),
     engine: MockEngine,
 ) =
-    GenerativeModel(
-        name,
-        apikey,
-        controller =
-        APIController(
-            "super_cool_test_key",
-            name,
-            requestOptions.apiVersion,
-            requestOptions.timeout,
-            engine,
-        ),
-    )
+  GenerativeModel(
+    name,
+    apikey,
+    controller = APIController("super_cool_test_key", name, requestOptions, engine)
+  )
 
 /**
  * A variant of [commonTest] for performing *streaming-based* snapshot tests.
