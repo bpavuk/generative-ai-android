@@ -27,8 +27,8 @@ import kotlin.jvm.JvmOverloads
  */
 class Content @JvmOverloads constructor(val role: String? = "user", val parts: List<Part>) {
 
-  class Builder {
-    var role: String? = "user"
+    class Builder {
+        var role: String? = "user"
 
         var parts: MutableList<Part> = arrayListOf()
 
@@ -61,8 +61,8 @@ class Content @JvmOverloads constructor(val role: String? = "user", val parts: L
  * ```
  */
 fun content(role: String? = "user", init: Content.Builder.() -> Unit): Content {
-  val builder = Content.Builder()
-  builder.role = role
-  builder.init()
-  return builder.build()
+    val builder = Content.Builder()
+    builder.role = role
+    builder.init()
+    return builder.build()
 }
