@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,54 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("maven-publish")
-    id("org.jetbrains.dokka")
-    id("com.ncorti.ktfmt.gradle")
-    id("changelog-plugin")
-    id("release-plugin")
-    kotlin("android")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
     kotlin("plugin.serialization")
+    alias(libs.plugins.mavenPublish)
 }
 
-ktfmt {
-    googleStyle()
+kotlin {
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+    jvm()
+    js(IR) {
+        browser()
+        nodejs()
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "generativeai"
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":common"))
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        jvmTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.mockk)
+        }
+    }
 }
 
 android {
-    namespace = "com.google.ai.client.generativeai"
+    namespace = "dev.shreyaspatil.ai.client.generativeai"
     compileSdk = 34
 
     buildFeatures.buildConfig = true
@@ -40,8 +72,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "VERSION_NAME", "\"${project.version.toString()}\"")
     }
 
     publishing {
@@ -55,7 +85,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -63,60 +93,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 
     testOptions {
         unitTests.isReturnDefaultValues = true
-    }
-}
-
-dependencies {
-    implementation(project(":common"))
-
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("org.slf4j:slf4j-nop:2.0.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("org.reactivestreams:reactive-streams:1.0.3")
-
-    implementation("com.google.guava:listenablefuture:1.0")
-    implementation("androidx.concurrent:concurrent-futures:1.2.0-alpha03")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0-alpha03")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.kotest:kotest-assertions-core:5.5.5")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.5")
-    testImplementation("io.mockk:mockk:1.12.8")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:1.8.20")
-}
-
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "com.google.ai.client.generativeai"
-            artifactId = "generativeai"
-            version = project.version.toString()
-            pom {
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-            }
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-    repositories {
-        maven {
-            url = uri("${projectDir}/m2")
-        }
     }
 }

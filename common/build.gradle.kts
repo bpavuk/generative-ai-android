@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,68 @@
  */
 
 plugins {
-    id("com.android.library")
-    id("maven-publish")
-    id("com.ncorti.ktfmt.gradle")
-    id("changelog-plugin")
-    id("release-plugin")
-    kotlin("android")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
     kotlin("plugin.serialization")
+    alias(libs.plugins.mavenPublish)
 }
 
-ktfmt {
-    googleStyle()
+kotlin {
+    androidTarget {
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+    jvm()
+    js(IR) {
+        browser()
+        nodejs()
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "common"
+            isStatic = true
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.serialization.json)
+            implementation(libs.ktor.client.logging)
+
+            implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        androidMain.dependencies {
+            api(libs.ktor.client.okhttp)
+        }
+        jvmMain.dependencies {
+            api(libs.ktor.client.okhttp)
+            api(libs.slf4j.api)
+        }
+        iosMain.dependencies {
+            api(libs.ktor.client.darwin)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.assertions.json)
+        }
+    }
 }
 
 android {
-    namespace = "com.google.ai.client.generativeai.common"
+    namespace = "dev.shreyaspatil.ai.client.generativeai.common"
     compileSdk = 34
 
     buildFeatures.buildConfig = true
@@ -39,8 +86,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "VERSION_NAME", "\"${project.version.toString()}\"")
     }
 
     publishing {
@@ -54,7 +99,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -62,65 +107,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 
     testOptions {
         unitTests.isReturnDefaultValues = true
-    }
-}
-
-dependencies {
-    val ktorVersion = "2.3.2"
-
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("org.slf4j:slf4j-nop:2.0.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.3")
-    implementation("org.reactivestreams:reactive-streams:1.0.3")
-
-    implementation("com.google.guava:listenablefuture:1.0")
-    implementation("androidx.concurrent:concurrent-futures:1.2.0-alpha02")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0-alpha02")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.kotest:kotest-assertions-core:4.0.7")
-    testImplementation("io.kotest:kotest-assertions-jvm:4.0.7")
-    testImplementation("io.kotest:kotest-assertions-json:4.0.7")
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-}
-
-publishing {
-    publications {
-        register<MavenPublication>("release") {
-            groupId = "com.google.ai.client.generativeai"
-            artifactId = "common"
-            version = project.version.toString()
-            pom {
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                    }
-                }
-            }
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-    repositories {
-        maven {
-            url = uri("${projectDir}/m2")
-        }
     }
 }
