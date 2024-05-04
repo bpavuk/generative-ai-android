@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import kotlinx.serialization.decodeFromString
@@ -29,15 +28,15 @@ import kotlinx.serialization.json.jsonArray
  * @property T: the type of the object that this maps to in code.
  */
 class FunctionType<T>(val name: String, val parse: (String?) -> T?) {
-  companion object {
-    val STRING = FunctionType<String>("STRING") { it }
-    val INTEGER = FunctionType<Long>("INTEGER") { it?.toLongOrNull() }
-    val NUMBER = FunctionType<Double>("NUMBER") { it?.toDoubleOrNull() }
-    val BOOLEAN = FunctionType<Boolean>("BOOLEAN") { it?.toBoolean() }
-    val ARRAY =
-      FunctionType<List<String>>("ARRAY") { it ->
-        it?.let { Json.parseToJsonElement(it).jsonArray.map { element -> element.toString() } }
-      }
-    val OBJECT = FunctionType<JsonObject>("OBJECT") { it?.let { Json.decodeFromString(JsonObject.serializer(), it) } }
-  }
+    companion object {
+        val STRING = FunctionType<String>("STRING") { it }
+        val INTEGER = FunctionType<Long>("INTEGER") { it?.toLongOrNull() }
+        val NUMBER = FunctionType<Double>("NUMBER") { it?.toDoubleOrNull() }
+        val BOOLEAN = FunctionType<Boolean>("BOOLEAN") { it?.toBoolean() }
+        val ARRAY =
+            FunctionType<List<String>>("ARRAY") { it ->
+                it?.let { Json.parseToJsonElement(it).jsonArray.map { element -> element.toString() } }
+            }
+        val OBJECT = FunctionType<JsonObject>("OBJECT") { it?.let { Json.decodeFromString(JsonObject.serializer(), it) } }
+    }
 }

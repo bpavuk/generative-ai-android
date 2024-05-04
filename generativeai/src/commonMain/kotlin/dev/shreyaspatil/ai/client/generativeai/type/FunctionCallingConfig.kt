@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 /**
@@ -23,20 +22,20 @@ package dev.shreyaspatil.ai.client.generativeai.type
  * @param mode The function calling mode of the model
  */
 class FunctionCallingConfig(val mode: Mode) {
-  enum class Mode {
-    /**
-     * The default behavior for function calling. The model calls functions to answer queries at its
-     * discretion
-     */
-    AUTO,
+    enum class Mode {
+        /**
+         * The default behavior for function calling. The model calls functions to answer queries at its
+         * discretion
+         */
+        AUTO,
 
-    /** The model always predicts a provided function call to answer every query. */
-    ANY,
+        /** The model always predicts a provided function call to answer every query. */
+        ANY,
 
-    /**
-     * The model will never predict a function call to answer a query. This can also be achieved by
-     * not passing any tools to the model.
-     */
-    NONE
-  }
+        /**
+         * The model will never predict a function call to answer a query. This can also be achieved by
+         * not passing any tools to the model.
+         */
+        NONE,
+    }
 }

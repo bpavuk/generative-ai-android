@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @file:Suppress("DEPRECATION") // a replacement for our purposes has not been published yet
 
 package dev.shreyaspatil.ai.client.generativeai.common.util
@@ -46,11 +45,11 @@ import kotlinx.serialization.json.Json
  * @param block A suspending function to process each line.
  */
 internal suspend fun ByteReadChannel.onEachLine(block: suspend (String) -> Unit) {
-  while (!isClosedForRead) {
-    awaitContent()
-    val line = readUTF8Line()?.takeUnless { it.isEmpty() } ?: continue
-    block(line)
-  }
+    while (!isClosedForRead) {
+        awaitContent()
+        val line = readUTF8Line()?.takeUnless { it.isEmpty() } ?: continue
+        block(line)
+    }
 }
 
 /**
@@ -79,10 +78,10 @@ internal suspend fun ByteReadChannel.onEachLine(block: suspend (String) -> Unit)
  * @throws IllegalArgumentException if the decoded input is not a valid instance of [T]
  */
 internal inline fun <reified T> Json.decodeToFlow(channel: ByteReadChannel): Flow<T> = channelFlow {
-  channel.onEachLine {
-    val data = it.removePrefix("data:")
-    send(decodeFromString(data))
-  }
+    channel.onEachLine {
+        val data = it.removePrefix("data:")
+        send(decodeFromString(data))
+    }
 }
 
 /**
@@ -93,8 +92,8 @@ internal inline fun <reified T> Json.decodeToFlow(channel: ByteReadChannel): Flo
  * @param bytes the data to send through the channel
  */
 internal suspend fun ByteChannel.send(bytes: ByteArray) {
-  writeFully(bytes)
-  close()
+    writeFully(bytes)
+    close()
 }
 
 /** String separator used in SSE communication to signal the end of a message. */

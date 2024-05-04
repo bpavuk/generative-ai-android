@@ -39,8 +39,8 @@ import kotlinx.serialization.encoding.Encoder
 import kotlin.enums.EnumEntries
 
 interface SerializableEnum<T : Enum<T>> {
-  val serialName: String
-    get() = "UNKNOWN"
+    val serialName: String
+        get() = "UNKNOWN"
 }
 
 /**
@@ -52,35 +52,35 @@ interface SerializableEnum<T : Enum<T>> {
  * about opening an issue on GitHub regarding the new enum value.
  */
 internal fun <T> enumSerializer(
-  enumValues: EnumEntries<T>,
+    enumValues: EnumEntries<T>,
 ) where
         T : SerializableEnum<T>,
         T : Enum<T> =
-  object : KSerializer<T> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("FirstOrdinalSerializer")
+    object : KSerializer<T> {
+        override val descriptor: SerialDescriptor = buildClassSerialDescriptor("FirstOrdinalSerializer")
 
-    override fun deserialize(decoder: Decoder): T {
-      val name = decoder.decodeString()
+        override fun deserialize(decoder: Decoder): T {
+            val name = decoder.decodeString()
 
-      return enumValues.firstOrNull { it.serialName == name }
-        ?: enumValues.first().also { printWarning(name) }
-    }
+            return enumValues.firstOrNull { it.serialName == name }
+                ?: enumValues.first().also { printWarning(name) }
+        }
 
-    private fun printWarning(name: String) {
-      Log.e(
-        "EnumSerializer",
-        """
+        private fun printWarning(name: String) {
+            Log.e(
+                "EnumSerializer",
+                """
         |Unknown enum value found: $name"
         |This usually means the backend was updated, and the SDK needs to be updated to match it.
         |Check if there's a new version for the SDK, otherwise please open an issue on our
         |GitHub to bring it to our attention:
         |https://github.com/google/google-ai-android
        """
-          .trimMargin(),
-      )
-    }
+                    .trimMargin(),
+            )
+        }
 
-    override fun serialize(encoder: Encoder, value: T) {
-      encoder.encodeString(value.serialName)
+        override fun serialize(encoder: Encoder, value: T) {
+            encoder.encodeString(value.serialName)
+        }
     }
-  }

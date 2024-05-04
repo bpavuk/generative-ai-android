@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common.util
 
 /**
@@ -25,8 +24,9 @@ package dev.shreyaspatil.ai.client.generativeai.common.util
  * @throws IndexOutOfBoundsException if the StringBuilder is empty.
  */
 internal fun StringBuilder.removeLast(): StringBuilder {
-    if (this.isEmpty()) throw IndexOutOfBoundsException("StringBuilder is empty.")
-    else {
+    if (this.isEmpty()) {
+        throw IndexOutOfBoundsException("StringBuilder is empty.")
+    } else {
         val result = this.toString().dropLast(1)
         return StringBuilder(result)
     }

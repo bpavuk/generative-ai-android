@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common
 
 import dev.shreyaspatil.ai.client.generativeai.common.server.FinishReason
@@ -36,7 +35,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -46,10 +44,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration
 
 val JSON = Json {
-  ignoreUnknownKeys = true
-  prettyPrint = false
+    ignoreUnknownKeys = true
+    prettyPrint = false
 }
 
 /**
@@ -66,159 +65,159 @@ val JSON = Json {
  */
 class APIController
 internal constructor(
-  private val key: String,
-  model: String,
-  private val requestOptions: RequestOptions,
-  httpEngine: HttpClientEngine?,
-  private val apiClient: String,
-  private val headerProvider: HeaderProvider?
+    private val key: String,
+    model: String,
+    private val requestOptions: RequestOptions,
+    httpEngine: HttpClientEngine?,
+    private val apiClient: String,
+    private val headerProvider: HeaderProvider?,
 ) {
 
-  constructor(
-    key: String,
-    model: String,
-    requestOptions: RequestOptions,
-    apiClient: String,
-    headerProvider: HeaderProvider? = null
-  ) : this(key, model, requestOptions, null, apiClient, headerProvider)
+    constructor(
+        key: String,
+        model: String,
+        requestOptions: RequestOptions,
+        apiClient: String,
+        headerProvider: HeaderProvider? = null,
+    ) : this(key, model, requestOptions, null, apiClient, headerProvider)
 
-  private val model = fullModelName(model)
+    private val model = fullModelName(model)
 
-  private val client = if (httpEngine != null) {
-    HttpClient(httpEngine) {
-      install(HttpTimeout) {
-        requestTimeoutMillis = requestOptions.timeout.inWholeMilliseconds
-        socketTimeoutMillis = 80_000
-      }
-      install(ContentNegotiation) { json(JSON) }
-    }
-  } else {
-    HttpClient {
-      install(HttpTimeout) {
-        requestTimeoutMillis = requestOptions.timeout.inWholeMilliseconds
-        socketTimeoutMillis = 80_000
-      }
-      install(ContentNegotiation) { json(JSON) }
-    }
-  }
-
-  suspend fun generateContent(request: GenerateContentRequest): GenerateContentResponse =
-    try {
-      client
-        .post("${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:generateContent") {
-          applyCommonConfiguration(request)
-          applyHeaderProvider()
+    private val client = if (httpEngine != null) {
+        HttpClient(httpEngine) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = requestOptions.timeout.inWholeMilliseconds
+                socketTimeoutMillis = 80_000
+            }
+            install(ContentNegotiation) { json(JSON) }
         }
-        .also { validateResponse(it) }
-        .body<GenerateContentResponse>()
-        .validate()
-    } catch (e: Throwable) {
-      throw GoogleGenerativeAIException.from(e)
-    }
-
-  fun generateContentStream(request: GenerateContentRequest): Flow<GenerateContentResponse> =
-    client
-      .postStream<GenerateContentResponse>(
-        "${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:streamGenerateContent?alt=sse"
-      ) {
-        applyCommonConfiguration(request)
-      }
-      .map { it.validate() }
-      .catch { throw GoogleGenerativeAIException.from(it) }
-
-  suspend fun countTokens(request: CountTokensRequest): CountTokensResponse =
-    try {
-      client
-        .post("${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:countTokens") {
-          applyCommonConfiguration(request)
-          applyHeaderProvider()
-        }
-        .also { validateResponse(it) }
-        .body()
-    } catch (e: Throwable) {
-      throw GoogleGenerativeAIException.from(e)
-    }
-
-  private fun HttpRequestBuilder.applyCommonConfiguration(request: Request) {
-    when (request) {
-      is GenerateContentRequest -> setBody<GenerateContentRequest>(request)
-      is CountTokensRequest -> setBody<CountTokensRequest>(request)
-    }
-    contentType(ContentType.Application.Json)
-    header("x-goog-api-key", key)
-    header("x-goog-api-client", apiClient)
-  }
-
-  private suspend fun HttpRequestBuilder.applyHeaderProvider() {
-    if (headerProvider != null) {
-      try {
-        withTimeout(headerProvider.timeout) {
-          for ((tag, value) in headerProvider.generateHeaders()) {
-            header(tag, value)
-          }
-        }
-      } catch (e: TimeoutCancellationException) {
-        Log.w(TAG, "HeaderProvided timed out without generating headers, ignoring")
-      }
-    }
-  }
-
-  /**
-   * Makes a POST request to the specified [url] and returns a [Flow] of deserialized response
-   * objects of type [R]. The response is expected to be a stream of JSON objects that are parsed in
-   * real-time as they are received from the server.
-   *
-   * This function is intended for internal use within the client that handles streaming responses.
-   *
-   * Example usage:
-   * ```
-   * val client: HttpClient = HttpClient(CIO)
-   * val request: Request = GenerateContentRequest(...)
-   * val url: String = "http://example.com/stream"
-   *
-   * val responses: GenerateContentResponse = client.postStream(url) {
-   *   setBody(request)
-   *   contentType(ContentType.Application.Json)
-   * }
-   * responses.collect {
-   *   println("Got a response: $it")
-   * }
-   * ```
-   *
-   * @param R The type of the response object.
-   * @param url The URL to which the POST request will be made.
-   * @param config An optional [HttpRequestBuilder] callback for request configuration.
-   * @return A [Flow] of response objects of type [R].
-   */
-  private inline fun <reified R : Response> HttpClient.postStream(
-    url: String,
-    crossinline config: HttpRequestBuilder.() -> Unit = {},
-  ): Flow<R> = channelFlow {
-    launch(CoroutineName("postStream")) {
-      preparePost(url) {
-          applyHeaderProvider()
-          config()
-        }
-        .execute {
-          validateResponse(it)
-
-          val channel = it.bodyAsChannel()
-          val flow = JSON.decodeToFlow<R>(channel)
-
-          flow.collect { send(it) }
+    } else {
+        HttpClient {
+            install(HttpTimeout) {
+                requestTimeoutMillis = requestOptions.timeout.inWholeMilliseconds
+                socketTimeoutMillis = 80_000
+            }
+            install(ContentNegotiation) { json(JSON) }
         }
     }
-  }
 
-  companion object {
-    private val TAG = "ApiController"
-  }
+    suspend fun generateContent(request: GenerateContentRequest): GenerateContentResponse =
+        try {
+            client
+                .post("${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:generateContent") {
+                    applyCommonConfiguration(request)
+                    applyHeaderProvider()
+                }
+                .also { validateResponse(it) }
+                .body<GenerateContentResponse>()
+                .validate()
+        } catch (e: Throwable) {
+            throw GoogleGenerativeAIException.from(e)
+        }
+
+    fun generateContentStream(request: GenerateContentRequest): Flow<GenerateContentResponse> =
+        client
+            .postStream<GenerateContentResponse>(
+                "${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:streamGenerateContent?alt=sse",
+            ) {
+                applyCommonConfiguration(request)
+            }
+            .map { it.validate() }
+            .catch { throw GoogleGenerativeAIException.from(it) }
+
+    suspend fun countTokens(request: CountTokensRequest): CountTokensResponse =
+        try {
+            client
+                .post("${requestOptions.endpoint}/${requestOptions.apiVersion}/$model:countTokens") {
+                    applyCommonConfiguration(request)
+                    applyHeaderProvider()
+                }
+                .also { validateResponse(it) }
+                .body()
+        } catch (e: Throwable) {
+            throw GoogleGenerativeAIException.from(e)
+        }
+
+    private fun HttpRequestBuilder.applyCommonConfiguration(request: Request) {
+        when (request) {
+            is GenerateContentRequest -> setBody<GenerateContentRequest>(request)
+            is CountTokensRequest -> setBody<CountTokensRequest>(request)
+        }
+        contentType(ContentType.Application.Json)
+        header("x-goog-api-key", key)
+        header("x-goog-api-client", apiClient)
+    }
+
+    private suspend fun HttpRequestBuilder.applyHeaderProvider() {
+        if (headerProvider != null) {
+            try {
+                withTimeout(headerProvider.timeout) {
+                    for ((tag, value) in headerProvider.generateHeaders()) {
+                        header(tag, value)
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                Log.w(TAG, "HeaderProvided timed out without generating headers, ignoring")
+            }
+        }
+    }
+
+    /**
+     * Makes a POST request to the specified [url] and returns a [Flow] of deserialized response
+     * objects of type [R]. The response is expected to be a stream of JSON objects that are parsed in
+     * real-time as they are received from the server.
+     *
+     * This function is intended for internal use within the client that handles streaming responses.
+     *
+     * Example usage:
+     * ```
+     * val client: HttpClient = HttpClient(CIO)
+     * val request: Request = GenerateContentRequest(...)
+     * val url: String = "http://example.com/stream"
+     *
+     * val responses: GenerateContentResponse = client.postStream(url) {
+     *   setBody(request)
+     *   contentType(ContentType.Application.Json)
+     * }
+     * responses.collect {
+     *   println("Got a response: $it")
+     * }
+     * ```
+     *
+     * @param R The type of the response object.
+     * @param url The URL to which the POST request will be made.
+     * @param config An optional [HttpRequestBuilder] callback for request configuration.
+     * @return A [Flow] of response objects of type [R].
+     */
+    private inline fun <reified R : Response> HttpClient.postStream(
+        url: String,
+        crossinline config: HttpRequestBuilder.() -> Unit = {},
+    ): Flow<R> = channelFlow {
+        launch(CoroutineName("postStream")) {
+            preparePost(url) {
+                applyHeaderProvider()
+                config()
+            }
+                .execute {
+                    validateResponse(it)
+
+                    val channel = it.bodyAsChannel()
+                    val flow = JSON.decodeToFlow<R>(channel)
+
+                    flow.collect { send(it) }
+                }
+        }
+    }
+
+    companion object {
+        private val TAG = "ApiController"
+    }
 }
 
 interface HeaderProvider {
-  val timeout: Duration
+    val timeout: Duration
 
-  suspend fun generateHeaders(): Map<String, String>
+    suspend fun generateHeaders(): Map<String, String>
 }
 
 /**
@@ -229,34 +228,34 @@ interface HeaderProvider {
 private fun fullModelName(name: String): String = name.takeIf { it.contains("/") } ?: "models/$name"
 
 private suspend fun validateResponse(response: HttpResponse) {
-  if (response.status == HttpStatusCode.OK) return
-  val text = response.bodyAsText()
-  val message =
-    try {
-      JSON.decodeFromString<GRpcErrorResponse>(text).error.message
-    } catch (e: Throwable) {
-      "Unexpected Response:\n$text"
+    if (response.status == HttpStatusCode.OK) return
+    val text = response.bodyAsText()
+    val message =
+        try {
+            JSON.decodeFromString<GRpcErrorResponse>(text).error.message
+        } catch (e: Throwable) {
+            "Unexpected Response:\n$text"
+        }
+    if (message.contains("API key not valid")) {
+        throw InvalidAPIKeyException(message)
     }
-  if (message.contains("API key not valid")) {
-    throw InvalidAPIKeyException(message)
-  }
-  // TODO (b/325117891): Use a better method than string matching.
-  if (message == "User location is not supported for the API use.") {
-    throw UnsupportedUserLocationException()
-  }
-  if (message.contains("quota")) {
-    throw QuotaExceededException(message)
-  }
-  throw ServerException(message)
+    // TODO (b/325117891): Use a better method than string matching.
+    if (message == "User location is not supported for the API use.") {
+        throw UnsupportedUserLocationException()
+    }
+    if (message.contains("quota")) {
+        throw QuotaExceededException(message)
+    }
+    throw ServerException(message)
 }
 
 private fun GenerateContentResponse.validate() = apply {
-  if ((candidates?.isEmpty() != false) && promptFeedback == null) {
-    throw SerializationException("Error deserializing response, found no valid fields")
-  }
-  promptFeedback?.blockReason?.let { throw PromptBlockedException(this) }
-  candidates
-    ?.mapNotNull { it.finishReason }
-    ?.firstOrNull { it != FinishReason.STOP }
-    ?.let { throw ResponseStoppedException(this) }
+    if ((candidates?.isEmpty() != false) && promptFeedback == null) {
+        throw SerializationException("Error deserializing response, found no valid fields")
+    }
+    promptFeedback?.blockReason?.let { throw PromptBlockedException(this) }
+    candidates
+        ?.mapNotNull { it.finishReason }
+        ?.firstOrNull { it != FinishReason.STOP }
+        ?.let { throw ResponseStoppedException(this) }
 }

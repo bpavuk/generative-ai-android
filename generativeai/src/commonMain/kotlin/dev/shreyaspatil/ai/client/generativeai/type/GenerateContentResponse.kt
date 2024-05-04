@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import dev.shreyaspatil.ai.client.generativeai.common.util.Log
@@ -26,48 +25,48 @@ import dev.shreyaspatil.ai.client.generativeai.common.util.Log
  *   populated in the first response.
  */
 class GenerateContentResponse(
-  val candidates: List<Candidate>,
-  val promptFeedback: PromptFeedback?,
-  val usageMetadata: UsageMetadata?
+    val candidates: List<Candidate>,
+    val promptFeedback: PromptFeedback?,
+    val usageMetadata: UsageMetadata?,
 ) {
-  /** Convenience field representing the first text part in the response, if it exists. */
-  val text: String? by lazy { firstPartAs<TextPart>()?.text }
+    /** Convenience field representing the first text part in the response, if it exists. */
+    val text: String? by lazy { firstPartAs<TextPart>()?.text }
 
-  /** Convenience field representing the first text part in the response, if it exists. */
-  val functionCall: FunctionCallPart? by lazy { firstPartAs() }
+    /** Convenience field representing the first text part in the response, if it exists. */
+    val functionCall: FunctionCallPart? by lazy { firstPartAs() }
 
-  /** Convenience field representing the first text part in the response, if it exists. */
-  val functionResponse: FunctionResponsePart? by lazy { firstPartAs() }
+    /** Convenience field representing the first text part in the response, if it exists. */
+    val functionResponse: FunctionResponsePart? by lazy { firstPartAs() }
 
-  private inline fun <reified T : Part> firstPartAs(): T? {
-    if (candidates.isEmpty()) {
-      warn("No candidates were found, but was asked to get a candidate.")
-      return null
+    private inline fun <reified T : Part> firstPartAs(): T? {
+        if (candidates.isEmpty()) {
+            warn("No candidates were found, but was asked to get a candidate.")
+            return null
+        }
+
+        val (parts, otherParts) = candidates.first().content.parts.partition { it is T }
+        val type = T::class.simpleName ?: "of the part type you asked for"
+
+        if (parts.isEmpty()) {
+            if (otherParts.isNotEmpty()) {
+                warn(
+                    "We didn't find any $type, but we did find other part types. Did you ask for the right type?",
+                )
+            }
+
+            return null
+        }
+
+        if (parts.size > 1) {
+            warn("Multiple $type were found, returning the first one.")
+        } else if (otherParts.isNotEmpty()) {
+            warn("Returning the only $type found, but other part types were present as well.")
+        }
+
+        return parts.first() as T
     }
 
-    val (parts, otherParts) = candidates.first().content.parts.partition { it is T }
-    val type = T::class.simpleName ?: "of the part type you asked for"
-
-    if (parts.isEmpty()) {
-      if (otherParts.isNotEmpty()) {
-        warn(
-          "We didn't find any $type, but we did find other part types. Did you ask for the right type?"
-        )
-      }
-
-      return null
+    private fun warn(message: String) {
+        Log.w("GenerateContentResponse", message)
     }
-
-    if (parts.size > 1) {
-      warn("Multiple $type were found, returning the first one.")
-    } else if (otherParts.isNotEmpty()) {
-      warn("Returning the only $type found, but other part types were present as well.")
-    }
-
-    return parts.first() as T
-  }
-
-  private fun warn(message: String) {
-    Log.w("GenerateContentResponse", message)
-  }
 }

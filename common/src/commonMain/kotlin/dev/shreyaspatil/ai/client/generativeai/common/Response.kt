@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common
 
 import dev.shreyaspatil.ai.client.generativeai.common.server.Candidate
@@ -25,20 +24,20 @@ sealed interface Response
 
 @Serializable
 data class GenerateContentResponse(
-  val candidates: List<Candidate>? = null,
-  val promptFeedback: PromptFeedback? = null,
-  val usageMetadata: UsageMetadata? = null
+    val candidates: List<Candidate>? = null,
+    val promptFeedback: PromptFeedback? = null,
+    val usageMetadata: UsageMetadata? = null,
 ) : Response
 
 @Serializable
 data class CountTokensResponse(val totalTokens: Int, val totalBillableCharacters: Int? = null) :
-  Response
+    Response
 
 @Serializable data class GRpcErrorResponse(val error: GRpcError) : Response
 
 @Serializable
 data class UsageMetadata(
-  val promptTokenCount: Int? = null,
-  val candidatesTokenCount: Int? = null,
-  val totalTokenCount: Int? = null
+    val promptTokenCount: Int? = null,
+    val candidatesTokenCount: Int? = null,
+    val totalTokenCount: Int? = null,
 )

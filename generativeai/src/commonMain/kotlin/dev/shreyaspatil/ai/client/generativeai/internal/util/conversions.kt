@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.internal.util
-
 
 import dev.shreyaspatil.ai.client.generativeai.common.CountTokensResponse
 import dev.shreyaspatil.ai.client.generativeai.common.GenerateContentResponse
@@ -82,7 +80,7 @@ internal fun dev.shreyaspatil.ai.client.generativeai.type.Part.toInternal(): Par
 
         else ->
             throw SerializationException(
-                "The given subclass of Part (${this}) is not supported in the serialization yet."
+                "The given subclass of Part ($this) is not supported in the serialization yet.",
             )
     }
 }
@@ -137,8 +135,8 @@ internal fun ToolConfig.toInternal() =
 
                 FunctionCallingConfig.Mode.NONE ->
                     dev.shreyaspatil.ai.client.generativeai.common.client.FunctionCallingConfig.Mode.NONE
-            }
-        )
+            },
+        ),
     )
 
 internal fun dev.shreyaspatil.ai.client.generativeai.common.UsageMetadata.toPublic(): UsageMetadata =
@@ -165,7 +163,6 @@ internal fun <T> dev.shreyaspatil.ai.client.generativeai.type.Schema<T>.toIntern
         required,
         items?.toInternal(),
     )
-
 
 internal fun Candidate.toPublic(): dev.shreyaspatil.ai.client.generativeai.type.Candidate {
     val safetyRatings = safetyRatings?.map { it.toPublic() }.orEmpty()
@@ -216,7 +213,7 @@ internal fun Part.toPublic(): dev.shreyaspatil.ai.client.generativeai.type.Part 
 
         else ->
             throw SerializationException(
-                "Unsupported part type \"${this}\" provided. This model may not be supported by this SDK."
+                "Unsupported part type \"${this}\" provided. This model may not be supported by this SDK.",
             )
     }
 }
@@ -227,7 +224,7 @@ internal fun CitationSources.toPublic() =
 internal fun SafetyRating.toPublic() =
     dev.shreyaspatil.ai.client.generativeai.type.SafetyRating(
         category.toPublic(),
-        probability.toPublic()
+        probability.toPublic(),
     )
 
 internal fun PromptFeedback.toPublic(): dev.shreyaspatil.ai.client.generativeai.type.PromptFeedback {
@@ -287,7 +284,7 @@ internal fun GenerateContentResponse.toPublic() =
     dev.shreyaspatil.ai.client.generativeai.type.GenerateContentResponse(
         candidates?.map { it.toPublic() }.orEmpty(),
         promptFeedback?.toPublic(),
-        usageMetadata?.toPublic()
+        usageMetadata?.toPublic(),
     )
 
 internal fun CountTokensResponse.toPublic() =

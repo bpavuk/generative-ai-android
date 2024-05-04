@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common
 
 import dev.shreyaspatil.ai.client.generativeai.common.client.GenerationConfig
@@ -29,15 +28,15 @@ sealed interface Request
 
 @Serializable
 data class GenerateContentRequest(
-  @Transient val model: String? = null,
-  val contents: List<Content>,
-  @SerialName("safety_settings") val safetySettings: List<SafetySetting>? = null,
-  @SerialName("generation_config") val generationConfig: GenerationConfig? = null,
-  val tools: List<Tool>? = null,
-  @SerialName("tool_config") var toolConfig: ToolConfig? = null,
-  @SerialName("system_instruction") val systemInstruction: Content? = null,
+    @Transient val model: String? = null,
+    val contents: List<Content>,
+    @SerialName("safety_settings") val safetySettings: List<SafetySetting>? = null,
+    @SerialName("generation_config") val generationConfig: GenerationConfig? = null,
+    val tools: List<Tool>? = null,
+    @SerialName("tool_config") var toolConfig: ToolConfig? = null,
+    @SerialName("system_instruction") val systemInstruction: Content? = null,
 ) : Request
 
 @Serializable
 data class CountTokensRequest(@Transient val model: String? = null, val contents: List<Content>) :
-  Request
+    Request

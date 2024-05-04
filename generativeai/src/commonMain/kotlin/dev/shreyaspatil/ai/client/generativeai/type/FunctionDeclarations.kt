@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import kotlinx.serialization.json.JsonObject
@@ -27,15 +26,15 @@ import kotlinx.serialization.json.JsonObject
  * @property function the function implementation
  */
 class NoParameterFunction(
-  name: String,
-  description: String,
-  val function: suspend () -> JsonObject,
+    name: String,
+    description: String,
+    val function: suspend () -> JsonObject,
 ) : FunctionDeclaration(name, description) {
-  override fun getParameters() = listOf<Schema<Any>>()
+    override fun getParameters() = listOf<Schema<Any>>()
 
-  suspend fun execute() = function()
+    suspend fun execute() = function()
 
-  override suspend fun execute(part: FunctionCallPart) = function()
+    override suspend fun execute(part: FunctionCallPart) = function()
 }
 
 /**
@@ -48,17 +47,17 @@ class NoParameterFunction(
  * @property function the function implementation
  */
 class OneParameterFunction<T>(
-  name: String,
-  description: String,
-  val param: Schema<T>,
-  val function: suspend (T) -> JsonObject,
+    name: String,
+    description: String,
+    val param: Schema<T>,
+    val function: suspend (T) -> JsonObject,
 ) : FunctionDeclaration(name, description) {
-  override fun getParameters() = listOf(param)
+    override fun getParameters() = listOf(param)
 
-  override suspend fun execute(part: FunctionCallPart): JsonObject {
-    val arg1 = part.getArgOrThrow(param)
-    return function(arg1)
-  }
+    override suspend fun execute(part: FunctionCallPart): JsonObject {
+        val arg1 = part.getArgOrThrow(param)
+        return function(arg1)
+    }
 }
 
 /**
@@ -72,19 +71,19 @@ class OneParameterFunction<T>(
  * @property function the function implementation
  */
 class TwoParameterFunction<T, U>(
-  name: String,
-  description: String,
-  val param1: Schema<T>,
-  val param2: Schema<U>,
-  val function: suspend (T, U) -> JsonObject,
+    name: String,
+    description: String,
+    val param1: Schema<T>,
+    val param2: Schema<U>,
+    val function: suspend (T, U) -> JsonObject,
 ) : FunctionDeclaration(name, description) {
-  override fun getParameters() = listOf(param1, param2)
+    override fun getParameters() = listOf(param1, param2)
 
-  override suspend fun execute(part: FunctionCallPart): JsonObject {
-    val arg1 = part.getArgOrThrow(param1)
-    val arg2 = part.getArgOrThrow(param2)
-    return function(arg1, arg2)
-  }
+    override suspend fun execute(part: FunctionCallPart): JsonObject {
+        val arg1 = part.getArgOrThrow(param1)
+        val arg2 = part.getArgOrThrow(param2)
+        return function(arg1, arg2)
+    }
 }
 
 /**
@@ -99,21 +98,21 @@ class TwoParameterFunction<T, U>(
  * @property function the function implementation
  */
 class ThreeParameterFunction<T, U, V>(
-  name: String,
-  description: String,
-  val param1: Schema<T>,
-  val param2: Schema<U>,
-  val param3: Schema<V>,
-  val function: suspend (T, U, V) -> JsonObject,
+    name: String,
+    description: String,
+    val param1: Schema<T>,
+    val param2: Schema<U>,
+    val param3: Schema<V>,
+    val function: suspend (T, U, V) -> JsonObject,
 ) : FunctionDeclaration(name, description) {
-  override fun getParameters() = listOf(param1, param2, param3)
+    override fun getParameters() = listOf(param1, param2, param3)
 
-  override suspend fun execute(part: FunctionCallPart): JsonObject {
-    val arg1 = part.getArgOrThrow(param1)
-    val arg2 = part.getArgOrThrow(param2)
-    val arg3 = part.getArgOrThrow(param3)
-    return function(arg1, arg2, arg3)
-  }
+    override suspend fun execute(part: FunctionCallPart): JsonObject {
+        val arg1 = part.getArgOrThrow(param1)
+        val arg2 = part.getArgOrThrow(param2)
+        val arg3 = part.getArgOrThrow(param3)
+        return function(arg1, arg2, arg3)
+    }
 }
 
 /**
@@ -129,29 +128,29 @@ class ThreeParameterFunction<T, U, V>(
  * @property function the function implementation
  */
 class FourParameterFunction<T, U, V, W>(
-  name: String,
-  description: String,
-  val param1: Schema<T>,
-  val param2: Schema<U>,
-  val param3: Schema<V>,
-  val param4: Schema<W>,
-  val function: suspend (T, U, V, W) -> JsonObject,
+    name: String,
+    description: String,
+    val param1: Schema<T>,
+    val param2: Schema<U>,
+    val param3: Schema<V>,
+    val param4: Schema<W>,
+    val function: suspend (T, U, V, W) -> JsonObject,
 ) : FunctionDeclaration(name, description) {
-  override fun getParameters() = listOf(param1, param2, param3, param4)
+    override fun getParameters() = listOf(param1, param2, param3, param4)
 
-  override suspend fun execute(part: FunctionCallPart): JsonObject {
-    val arg1 = part.getArgOrThrow(param1)
-    val arg2 = part.getArgOrThrow(param2)
-    val arg3 = part.getArgOrThrow(param3)
-    val arg4 = part.getArgOrThrow(param4)
-    return function(arg1, arg2, arg3, arg4)
-  }
+    override suspend fun execute(part: FunctionCallPart): JsonObject {
+        val arg1 = part.getArgOrThrow(param1)
+        val arg2 = part.getArgOrThrow(param2)
+        val arg3 = part.getArgOrThrow(param3)
+        val arg4 = part.getArgOrThrow(param4)
+        return function(arg1, arg2, arg3, arg4)
+    }
 }
 
 abstract class FunctionDeclaration(val name: String, val description: String) {
-  abstract fun getParameters(): List<Schema<out Any?>>
+    abstract fun getParameters(): List<Schema<out Any?>>
 
-  abstract suspend fun execute(part: FunctionCallPart): JsonObject
+    abstract suspend fun execute(part: FunctionCallPart): JsonObject
 }
 
 /**
@@ -170,96 +169,96 @@ abstract class FunctionDeclaration(val name: String, val description: String) {
  *   array
  */
 class Schema<T>(
-  val name: String,
-  val description: String,
-  val format: String? = null,
-  val enum: List<String>? = null,
-  val properties: Map<String, Schema<out Any>>? = null,
-  val required: List<String>? = null,
-  val items: Schema<out Any>? = null,
-  val type: FunctionType<T>,
+    val name: String,
+    val description: String,
+    val format: String? = null,
+    val enum: List<String>? = null,
+    val properties: Map<String, Schema<out Any>>? = null,
+    val required: List<String>? = null,
+    val items: Schema<out Any>? = null,
+    val type: FunctionType<T>,
 ) {
-  fun fromString(value: String?) = type.parse(value)
+    fun fromString(value: String?) = type.parse(value)
 
-  companion object {
-    /** Registers a schema for an integer number */
-    fun int(name: String, description: String) =
-      Schema<Long>(name = name, description = description, type = FunctionType.INTEGER)
+    companion object {
+        /** Registers a schema for an integer number */
+        fun int(name: String, description: String) =
+            Schema<Long>(name = name, description = description, type = FunctionType.INTEGER)
 
-    /** Registers a schema for a string */
-    fun str(name: String, description: String) =
-      Schema<String>(name = name, description = description, type = FunctionType.STRING)
+        /** Registers a schema for a string */
+        fun str(name: String, description: String) =
+            Schema<String>(name = name, description = description, type = FunctionType.STRING)
 
-    /** Registers a schema for a boolean */
-    fun bool(name: String, description: String) =
-      Schema<Boolean>(name = name, description = description, type = FunctionType.BOOLEAN)
+        /** Registers a schema for a boolean */
+        fun bool(name: String, description: String) =
+            Schema<Boolean>(name = name, description = description, type = FunctionType.BOOLEAN)
 
-    /** Registers a schema for a floating point number */
-    fun num(name: String, description: String) =
-      Schema<Double>(name = name, description = description, type = FunctionType.NUMBER)
+        /** Registers a schema for a floating point number */
+        fun num(name: String, description: String) =
+            Schema<Double>(name = name, description = description, type = FunctionType.NUMBER)
 
-    /**
-     * Registers a schema for a complex object. In a function it will be returned as a [JSONObject]
-     */
-    fun obj(name: String, description: String) =
-      Schema<JsonObject>(name = name, description = description, type = FunctionType.OBJECT)
+        /**
+         * Registers a schema for a complex object. In a function it will be returned as a [JSONObject]
+         */
+        fun obj(name: String, description: String) =
+            Schema<JsonObject>(name = name, description = description, type = FunctionType.OBJECT)
 
-    /** Registers a schema for an array */
-    fun arr(name: String, description: String) =
-      Schema<List<String>>(name = name, description = description, type = FunctionType.ARRAY)
+        /** Registers a schema for an array */
+        fun arr(name: String, description: String) =
+            Schema<List<String>>(name = name, description = description, type = FunctionType.ARRAY)
 
-    /** Registers a schema for an enum */
-    fun enum(name: String, description: String, values: List<String>) =
-      Schema<String>(
-        name = name,
-        description = description,
-        format = "enum",
-        enum = values,
-        type = FunctionType.STRING,
-      )
-  }
+        /** Registers a schema for an enum */
+        fun enum(name: String, description: String, values: List<String>) =
+            Schema<String>(
+                name = name,
+                description = description,
+                format = "enum",
+                enum = values,
+                type = FunctionType.STRING,
+            )
+    }
 }
 
 fun defineFunction(name: String, description: String, function: suspend () -> JsonObject) =
-  NoParameterFunction(name, description, function)
+    NoParameterFunction(name, description, function)
 
 fun <T> defineFunction(
-  name: String,
-  description: String,
-  arg1: Schema<T>,
-  function: suspend (T) -> JsonObject,
+    name: String,
+    description: String,
+    arg1: Schema<T>,
+    function: suspend (T) -> JsonObject,
 ) = OneParameterFunction(name, description, arg1, function)
 
 fun <T, U> defineFunction(
-  name: String,
-  description: String,
-  arg1: Schema<T>,
-  arg2: Schema<U>,
-  function: suspend (T, U) -> JsonObject,
+    name: String,
+    description: String,
+    arg1: Schema<T>,
+    arg2: Schema<U>,
+    function: suspend (T, U) -> JsonObject,
 ) = TwoParameterFunction(name, description, arg1, arg2, function)
 
 fun <T, U, W> defineFunction(
-  name: String,
-  description: String,
-  arg1: Schema<T>,
-  arg2: Schema<U>,
-  arg3: Schema<W>,
-  function: suspend (T, U, W) -> JsonObject,
+    name: String,
+    description: String,
+    arg1: Schema<T>,
+    arg2: Schema<U>,
+    arg3: Schema<W>,
+    function: suspend (T, U, W) -> JsonObject,
 ) = ThreeParameterFunction(name, description, arg1, arg2, arg3, function)
 
 fun <T, U, W, Z> defineFunction(
-  name: String,
-  description: String,
-  arg1: Schema<T>,
-  arg2: Schema<U>,
-  arg3: Schema<W>,
-  arg4: Schema<Z>,
-  function: suspend (T, U, W, Z) -> JsonObject,
+    name: String,
+    description: String,
+    arg1: Schema<T>,
+    arg2: Schema<U>,
+    arg3: Schema<W>,
+    arg4: Schema<Z>,
+    function: suspend (T, U, W, Z) -> JsonObject,
 ) = FourParameterFunction(name, description, arg1, arg2, arg3, arg4, function)
 
 private fun <T> FunctionCallPart.getArgOrThrow(param: Schema<T>): T {
-  return param.fromString(args[param.name])
-    ?: throw RuntimeException(
-      "Missing argument for parameter \"${param.name}\" for function \"$name\""
-    )
+    return param.fromString(args[param.name])
+        ?: throw RuntimeException(
+            "Missing argument for parameter \"${param.name}\" for function \"$name\"",
+        )
 }

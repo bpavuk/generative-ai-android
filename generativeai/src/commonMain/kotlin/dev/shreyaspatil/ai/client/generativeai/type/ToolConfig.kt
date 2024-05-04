@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 /**
@@ -24,10 +23,11 @@ package dev.shreyaspatil.ai.client.generativeai.type
  */
 class ToolConfig(val functionCallingConfig: FunctionCallingConfig) {
 
-  companion object {
-    /** Shorthand to construct a ToolConfig that restricts the model from calling any functions */
-    fun never(): ToolConfig = ToolConfig(FunctionCallingConfig(FunctionCallingConfig.Mode.NONE))
-    /** Shorthand to construct a ToolConfig that restricts the model to always call some function */
-    fun always(): ToolConfig = ToolConfig(FunctionCallingConfig(FunctionCallingConfig.Mode.ANY))
-  }
+    companion object {
+        /** Shorthand to construct a ToolConfig that restricts the model from calling any functions */
+        fun never(): ToolConfig = ToolConfig(FunctionCallingConfig(FunctionCallingConfig.Mode.NONE))
+
+        /** Shorthand to construct a ToolConfig that restricts the model to always call some function */
+        fun always(): ToolConfig = ToolConfig(FunctionCallingConfig(FunctionCallingConfig.Mode.ANY))
+    }
 }

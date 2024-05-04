@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import kotlin.jvm.JvmField
@@ -30,36 +29,41 @@ import kotlin.jvm.JvmField
  */
 class GenerationConfig
 private constructor(
-  val temperature: Float?,
-  val topK: Int?,
-  val topP: Float?,
-  val candidateCount: Int?,
-  val maxOutputTokens: Int?,
-  val stopSequences: List<String>?
+    val temperature: Float?,
+    val topK: Int?,
+    val topP: Float?,
+    val candidateCount: Int?,
+    val maxOutputTokens: Int?,
+    val stopSequences: List<String>?,
 ) {
 
-  class Builder {
-    @JvmField var temperature: Float? = null
-    @JvmField var topK: Int? = null
-    @JvmField var topP: Float? = null
-    @JvmField var candidateCount: Int? = null
-    @JvmField var maxOutputTokens: Int? = null
-    @JvmField var stopSequences: List<String>? = null
+    class Builder {
+        @JvmField var temperature: Float? = null
 
-    fun build() =
-      GenerationConfig(
-        temperature = temperature,
-        topK = topK,
-        topP = topP,
-        candidateCount = candidateCount,
-        maxOutputTokens = maxOutputTokens,
-        stopSequences = stopSequences
-      )
-  }
+        @JvmField var topK: Int? = null
 
-  companion object {
-    fun builder() = Builder()
-  }
+        @JvmField var topP: Float? = null
+
+        @JvmField var candidateCount: Int? = null
+
+        @JvmField var maxOutputTokens: Int? = null
+
+        @JvmField var stopSequences: List<String>? = null
+
+        fun build() =
+            GenerationConfig(
+                temperature = temperature,
+                topK = topK,
+                topP = topP,
+                candidateCount = candidateCount,
+                maxOutputTokens = maxOutputTokens,
+                stopSequences = stopSequences,
+            )
+    }
+
+    companion object {
+        fun builder() = Builder()
+    }
 }
 
 /**
@@ -78,7 +82,7 @@ private constructor(
  * ```
  */
 fun generationConfig(init: GenerationConfig.Builder.() -> Unit): GenerationConfig {
-  val builder = GenerationConfig.builder()
-  builder.init()
-  return builder.build()
+    val builder = GenerationConfig.builder()
+    builder.init()
+    return builder.build()
 }

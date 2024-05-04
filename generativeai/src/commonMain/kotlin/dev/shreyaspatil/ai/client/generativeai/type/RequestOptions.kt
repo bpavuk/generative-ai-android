@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import kotlin.time.Duration
@@ -28,14 +27,14 @@ import kotlin.time.toDuration
  * @property apiVersion the api endpoint to call.
  */
 class RequestOptions(
-  val timeout: Duration,
-  val apiVersion: String = "v1beta",
+    val timeout: Duration,
+    val apiVersion: String = "v1beta",
 ) {
-  constructor(
-    timeout: Long? = Long.MAX_VALUE,
-    apiVersion: String = "v1beta",
-  ) : this(
-    (timeout ?: Long.MAX_VALUE).toDuration(DurationUnit.MILLISECONDS),
-    apiVersion,
-  )
+    constructor(
+        timeout: Long? = Long.MAX_VALUE,
+        apiVersion: String = "v1beta",
+    ) : this(
+        (timeout ?: Long.MAX_VALUE).toDuration(DurationUnit.MILLISECONDS),
+        apiVersion,
+    )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common.util
 
 import kotlinx.coroutines.CoroutineScope
@@ -31,5 +30,5 @@ import kotlinx.coroutines.runBlocking
  * ```
  */
 internal fun doBlocking(block: suspend CoroutineScope.() -> Unit) {
-  runBlocking(block = block)
+    runBlocking(block = block)
 }

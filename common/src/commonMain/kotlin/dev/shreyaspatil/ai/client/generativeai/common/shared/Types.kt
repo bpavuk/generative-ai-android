@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common.shared
 
 import dev.shreyaspatil.ai.client.generativeai.common.util.SerializableEnum
@@ -39,7 +38,7 @@ enum class HarmCategory(override val serialName: String) : SerializableEnum<Harm
     HARASSMENT("HARM_CATEGORY_HARASSMENT"),
     HATE_SPEECH("HARM_CATEGORY_HATE_SPEECH"),
     SEXUALLY_EXPLICIT("HARM_CATEGORY_SEXUALLY_EXPLICIT"),
-    DANGEROUS_CONTENT("HARM_CATEGORY_DANGEROUS_CONTENT")
+    DANGEROUS_CONTENT("HARM_CATEGORY_DANGEROUS_CONTENT"),
 }
 
 typealias Base64 = String
@@ -75,7 +74,7 @@ data class FileDataPart(@SerialName("file_data") val fileData: FileData) : Part
 @Serializable
 data class FileData(
     @SerialName("mime_type") val mimeType: String,
-    @SerialName("file_uri") val fileUri: String
+    @SerialName("file_uri") val fileUri: String,
 )
 
 @Serializable

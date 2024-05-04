@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common.client
 
 import dev.shreyaspatil.ai.client.generativeai.common.util.SerializableEnum
@@ -24,50 +23,49 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GenerationConfig(
-  val temperature: Float?,
-  @SerialName("top_p") val topP: Float?,
-  @SerialName("top_k") val topK: Int?,
-  @SerialName("candidate_count") val candidateCount: Int?,
-  @SerialName("max_output_tokens") val maxOutputTokens: Int?,
-  @SerialName("stop_sequences") val stopSequences: List<String>?,
+    val temperature: Float?,
+    @SerialName("top_p") val topP: Float?,
+    @SerialName("top_k") val topK: Int?,
+    @SerialName("candidate_count") val candidateCount: Int?,
+    @SerialName("max_output_tokens") val maxOutputTokens: Int?,
+    @SerialName("stop_sequences") val stopSequences: List<String>?,
 )
 
 @Serializable data class Tool(val functionDeclarations: List<FunctionDeclaration>)
 
 @Serializable
 data class ToolConfig(
-  @SerialName("function_calling_config") val functionCallingConfig: FunctionCallingConfig
+    @SerialName("function_calling_config") val functionCallingConfig: FunctionCallingConfig,
 )
 
 @Serializable
 data class FunctionCallingConfig(val mode: Mode) {
-  @Serializable(ModeSerializer::class)
-  enum class Mode(override val serialName: String): SerializableEnum<Mode> {
-    UNSPECIFIED("MODE_UNSPECIFIED"),
-    AUTO("AUTO"),
-    ANY("ANY"),
-    NONE("NONE")
-  }
+    @Serializable(ModeSerializer::class)
+    enum class Mode(override val serialName: String) : SerializableEnum<Mode> {
+        UNSPECIFIED("MODE_UNSPECIFIED"),
+        AUTO("AUTO"),
+        ANY("ANY"),
+        NONE("NONE"),
+    }
 }
 
 @Serializable
 data class FunctionDeclaration(
-  val name: String,
-  val description: String,
-  val parameters: Schema,
+    val name: String,
+    val description: String,
+    val parameters: Schema,
 )
 
 @Serializable
 data class Schema(
-  val type: String,
-  val description: String? = null,
-  val format: String? = null,
-  val enum: List<String>? = null,
-  val properties: Map<String, Schema>? = null,
-  val required: List<String>? = null,
-  val items: Schema? = null,
+    val type: String,
+    val description: String? = null,
+    val format: String? = null,
+    val enum: List<String>? = null,
+    val properties: Map<String, Schema>? = null,
+    val required: List<String>? = null,
+    val items: Schema? = null,
 )
 
-
 internal object ModeSerializer :
-  KSerializer<FunctionCallingConfig.Mode> by enumSerializer(FunctionCallingConfig.Mode.entries)
+    KSerializer<FunctionCallingConfig.Mode> by enumSerializer(FunctionCallingConfig.Mode.entries)

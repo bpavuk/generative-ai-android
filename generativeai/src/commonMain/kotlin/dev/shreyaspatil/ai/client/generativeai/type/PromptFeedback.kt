@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 /**
@@ -23,21 +22,21 @@ package dev.shreyaspatil.ai.client.generativeai.type
  * @param safetyRatings A list of relevant [SafetyRating]s.
  */
 class PromptFeedback(
-  val blockReason: BlockReason?,
-  val safetyRatings: List<SafetyRating>,
+    val blockReason: BlockReason?,
+    val safetyRatings: List<SafetyRating>,
 )
 
 /** Describes why content was blocked. */
 enum class BlockReason {
-  /** A new and not yet supported value. */
-  UNKNOWN,
+    /** A new and not yet supported value. */
+    UNKNOWN,
 
-  /** Content was blocked for an unspecified reason. */
-  UNSPECIFIED,
+    /** Content was blocked for an unspecified reason. */
+    UNSPECIFIED,
 
-  /** Content was blocked for violating provided [SafetySetting]s. */
-  SAFETY,
+    /** Content was blocked for violating provided [SafetySetting]s. */
+    SAFETY,
 
-  /** Content was blocked for another reason. */
-  OTHER
+    /** Content was blocked for another reason. */
+    OTHER,
 }

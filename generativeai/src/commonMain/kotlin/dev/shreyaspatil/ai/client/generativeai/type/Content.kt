@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2023 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.type
 
 import kotlin.jvm.JvmName
@@ -27,26 +26,31 @@ import kotlin.jvm.JvmName
  */
 class Content constructor(val role: String? = "user", val parts: List<Part>) {
 
-  class Builder {
-    var role: String? = "user"
+    class Builder {
+        var role: String? = "user"
 
-    var parts: MutableList<Part> = arrayListOf()
+        var parts: MutableList<Part> = arrayListOf()
 
-    @JvmName("addPart") fun <T : Part> part(data: T) = apply { parts.add(data) }
+        @JvmName("addPart")
+        fun <T : Part> part(data: T) = apply { parts.add(data) }
 
-    @JvmName("addText") fun text(text: String) = part(TextPart(text))
+        @JvmName("addText")
+        fun text(text: String) = part(TextPart(text))
 
-    @JvmName("addBlob") fun blob(mimeType: String, blob: ByteArray) = part(BlobPart(mimeType, blob))
+        @JvmName("addBlob")
+        fun blob(mimeType: String, blob: ByteArray) = part(BlobPart(mimeType, blob))
 
-    @JvmName("addImage") fun image(image: Bitmap) = part(ImagePart(image))
+        @JvmName("addImage")
+        fun image(image: Bitmap) = part(ImagePart(image))
 
-    @JvmName("addImage") fun image(image: ByteArray) = part(ImagePart(Bitmap(image)))
+        @JvmName("addImage")
+        fun image(image: ByteArray) = part(ImagePart(Bitmap(image)))
 
-    @JvmName("addFileData")
-    fun fileData(uri: String, mimeType: String) = part(FileDataPart(uri, mimeType))
+        @JvmName("addFileData")
+        fun fileData(uri: String, mimeType: String) = part(FileDataPart(uri, mimeType))
 
-    fun build(): Content = Content(role, parts)
-  }
+        fun build(): Content = Content(role, parts)
+    }
 }
 
 /**
@@ -62,8 +66,8 @@ class Content constructor(val role: String? = "user", val parts: List<Part>) {
  * ```
  */
 fun content(role: String? = "user", init: Content.Builder.() -> Unit): Content {
-  val builder = Content.Builder()
-  builder.role = role
-  builder.init()
-  return builder.build()
+    val builder = Content.Builder()
+    builder.role = role
+    builder.init()
+    return builder.build()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package dev.shreyaspatil.ai.client.generativeai.common
 
 import io.ktor.client.plugins.HttpTimeout
@@ -29,17 +28,17 @@ import kotlin.time.toDuration
  * @property apiVersion the api endpoint to call.
  */
 class RequestOptions(
-  val timeout: Duration,
-  val apiVersion: String = "v1beta",
-  val endpoint: String = "https://generativelanguage.googleapis.com",
+    val timeout: Duration,
+    val apiVersion: String = "v1beta",
+    val endpoint: String = "https://generativelanguage.googleapis.com",
 ) {
-  constructor(
-    timeout: Long? = HttpTimeout.INFINITE_TIMEOUT_MS,
-    apiVersion: String = "v1beta",
-    endpoint: String = "https://generativelanguage.googleapis.com",
-  ) : this(
-    (timeout ?: HttpTimeout.INFINITE_TIMEOUT_MS).toDuration(DurationUnit.MILLISECONDS),
-    apiVersion,
-    endpoint,
-  )
+    constructor(
+        timeout: Long? = HttpTimeout.INFINITE_TIMEOUT_MS,
+        apiVersion: String = "v1beta",
+        endpoint: String = "https://generativelanguage.googleapis.com",
+    ) : this(
+        (timeout ?: HttpTimeout.INFINITE_TIMEOUT_MS).toDuration(DurationUnit.MILLISECONDS),
+        apiVersion,
+        endpoint,
+    )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Google LLC
+ * Copyright 2024 Shreyas Patil
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 @file:Suppress("DEPRECATION") // a replacement for our purposes has not been published yet
 
 package dev.shreyaspatil.ai.client.generativeai.common.util
@@ -34,30 +33,30 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteChannel
 import io.ktor.utils.io.close
 import io.ktor.utils.io.writeFully
-import java.io.File
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
+import java.io.File
 
 private val TEST_CLIENT_ID = "genai-android/test"
 
 internal fun prepareStreamingResponse(response: List<GenerateContentResponse>): List<ByteArray> =
-  response.map { "data: ${JSON.encodeToString(it)}$SSE_SEPARATOR".toByteArray() }
+    response.map { "data: ${JSON.encodeToString(it)}$SSE_SEPARATOR".toByteArray() }
 
 internal fun prepareResponse(response: GenerateContentResponse) =
-  JSON.encodeToString(response).toByteArray()
+    JSON.encodeToString(response).toByteArray()
 
 internal fun createRequest(vararg text: String): GenerateContentRequest {
-  val contents = text.map { Content(parts = listOf(TextPart(it))) }
+    val contents = text.map { Content(parts = listOf(TextPart(it))) }
 
-  return GenerateContentRequest("gemini", contents)
+    return GenerateContentRequest("gemini", contents)
 }
 
 internal fun createResponse(text: String) = createResponses(text).single()
 
 internal fun createResponses(vararg text: String): List<GenerateContentResponse> {
-  val candidates = text.map { Candidate(Content(parts = listOf(TextPart(it)))) }
+    val candidates = text.map { Candidate(Content(parts = listOf(TextPart(it)))) }
 
-  return candidates.map { GenerateContentResponse(candidates = listOf(it)) }
+    return candidates.map { GenerateContentResponse(candidates = listOf(it)) }
 }
 
 /**
@@ -98,24 +97,24 @@ internal typealias CommonTest = suspend CommonTestScope.() -> Unit
  * @see CommonTestScope
  */
 internal fun commonTest(
-  status: HttpStatusCode = HttpStatusCode.OK,
-  requestOptions: RequestOptions = RequestOptions(),
-  block: CommonTest
+    status: HttpStatusCode = HttpStatusCode.OK,
+    requestOptions: RequestOptions = RequestOptions(),
+    block: CommonTest,
 ) = doBlocking {
-  val channel = ByteChannel(autoFlush = true)
-  val mockEngine = MockEngine {
-    respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json"))
-  }
-  val apiController =
-    APIController(
-      "super_cool_test_key",
-      "gemini-pro",
-      requestOptions,
-      mockEngine,
-      TEST_CLIENT_ID,
-      null
-    )
-  CommonTestScope(channel, apiController).block()
+    val channel = ByteChannel(autoFlush = true)
+    val mockEngine = MockEngine {
+        respond(channel, status, headersOf(HttpHeaders.ContentType, "application/json"))
+    }
+    val apiController =
+        APIController(
+            "super_cool_test_key",
+            "gemini-pro",
+            requestOptions,
+            mockEngine,
+            TEST_CLIENT_ID,
+            null,
+        )
+    CommonTestScope(channel, apiController).block()
 }
 
 /**
@@ -130,23 +129,23 @@ internal fun commonTest(
  * @see goldenUnaryFile
  */
 internal fun goldenStreamingFile(
-  name: String,
-  httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
-  block: CommonTest
+    name: String,
+    httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
+    block: CommonTest,
 ) = doBlocking {
-  val goldenFile = loadGoldenFile("streaming/$name")
-  val messages = goldenFile.readLines().filter { it.isNotBlank() }
+    val goldenFile = loadGoldenFile("streaming/$name")
+    val messages = goldenFile.readLines().filter { it.isNotBlank() }
 
-  commonTest(httpStatusCode) {
-    launch {
-      for (message in messages) {
-        channel.writeFully("$message$SSE_SEPARATOR".toByteArray())
-      }
-      channel.close()
+    commonTest(httpStatusCode) {
+        launch {
+            for (message in messages) {
+                channel.writeFully("$message$SSE_SEPARATOR".toByteArray())
+            }
+            channel.close()
+        }
+
+        block()
     }
-
-    block()
-  }
 }
 
 /**
@@ -160,18 +159,18 @@ internal fun goldenStreamingFile(
  * @see goldenStreamingFile
  */
 internal fun goldenUnaryFile(
-  name: String,
-  httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
-  block: CommonTest
+    name: String,
+    httpStatusCode: HttpStatusCode = HttpStatusCode.OK,
+    block: CommonTest,
 ) =
-  commonTest(httpStatusCode) {
-    val goldenFile = loadGoldenFile("unary/$name")
-    val message = goldenFile.readText()
+    commonTest(httpStatusCode) {
+        val goldenFile = loadGoldenFile("unary/$name")
+        val message = goldenFile.readText()
 
-    channel.send(message.toByteArray())
+        channel.send(message.toByteArray())
 
-    block()
-  }
+        block()
+    }
 
 /**
  * Loads a *Golden File* from the resource directory.
