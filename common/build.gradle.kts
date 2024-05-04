@@ -71,6 +71,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotest.assertions.core)
             implementation(libs.kotest.assertions.json)
+            implementation(libs.ktor.client.mock)
         }
     }
 }
