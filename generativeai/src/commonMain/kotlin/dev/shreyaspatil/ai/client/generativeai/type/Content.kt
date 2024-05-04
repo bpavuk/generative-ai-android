@@ -40,6 +40,8 @@ class Content constructor(val role: String? = "user", val parts: List<Part>) {
 
     @JvmName("addImage") fun image(image: Bitmap) = part(ImagePart(image))
 
+    @JvmName("addImage") fun image(image: ByteArray) = part(ImagePart(Bitmap(image)))
+
     @JvmName("addFileData")
     fun fileData(uri: String, mimeType: String) = part(FileDataPart(uri, mimeType))
 
